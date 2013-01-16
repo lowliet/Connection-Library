@@ -114,10 +114,18 @@ public:
 	/**
 	 *	Receives specified number of bytes
 	 *	@param length number of bytes to receive
-	 *	@return number of bytes received, negative value on error
+	 *	@return received data
 	 *	@see Send()
 	 */
 	std::vector<char>	Receive(int length);
+	/**
+	 *	Receives specified number of bytes and saves it in buffer
+	 *	@param buffer buffer for data
+	 *	@param length number of bytes to receive
+	 *	@return number of bytes received, negative value on error
+	 *	@see Send()
+	 */
+	int					Receive(void *buffer, int length);
 	/**
 	 *	Sends specified number of data
 	 *	@param buffer buffer containing data
@@ -133,14 +141,6 @@ private:
 	 *	@return true if successful, false otherwise
 	 */
 	bool				InitializeSockets();
-	/**
-	 *	Receives specified number of bytes and saves it to buffer
-	 *	@param buffer buffer for data
-	 *	@param length number of bytes to receive
-	 *	@return number of bytes received, negative value on error
-	 *	@see Send()
-	 */
-	int					Receive(void *buffer, int length);
 	/**
 	 *	Structure holding basic connection parameters
 	 */

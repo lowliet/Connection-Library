@@ -65,7 +65,8 @@ bool Host::Disconnect()
 std::vector<char> Host::Receive(int length)
 {
 	std::vector<char> data(length, 0);
-	data.resize(this->Receive(&data.front(), length));
+	int receivedBytes = -1;
+	data.resize((receivedBytes = this->Receive(&data.front(), length)) > 0 ? receivedBytes : 0);
 	return data;
 }
 
