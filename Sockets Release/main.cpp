@@ -20,10 +20,20 @@ int main()
 	#endif
 
 	Host host;
+	std::vector<char> data;
 
-	if (host.Connect("onet.pl", 80))
+	if (host.Connect("localhost", 9000))
 	{
 		puts("connected");
+
+		printf("Sended: %i bytes\n", host.Send("This is test"));
+		data = host.Receive(32);
+		printf("Readed: %i bytes\n", data.size());
+
+		for (unsigned int i = 0; i < data.size(); i++)
+			printf("%c", data[i]);
+		puts("");
+
 		if (host.Disconnect())
 			puts("connection closed");
 		else

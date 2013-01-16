@@ -61,3 +61,23 @@ bool Host::Disconnect()
 	hostData.Reset();
 	return true;
 }
+
+std::vector<char> Host::Receive(int length)
+{
+	std::vector<char> data(length, 0);
+	data.resize(this->Receive(&data.front(), length));
+	return data;
+}
+
+int Host::Receive(void *buffer, int length)
+{
+	if (this->hostData.sock == -1) return -1;
+	return recv(this->hostData.sock, (char*)buffer, length, 0);
+}
+
+int Host::Send(const void *buffer, int length)
+{
+	if (this->hostData.sock == -1) return -1;
+	if (length == 0) length = strlen((const char*)buffer);
+	return send(this->hostData.sock, (const char*)buffer, length, 0);
+}

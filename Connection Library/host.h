@@ -33,6 +33,7 @@ License ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 #include <cstdio>
 #include <string>
+#include <vector>
 
 #if defined(_WIN32) || defined(_WIN64)
 	#include <WinSock2.h>
@@ -62,24 +63,24 @@ typedef struct
 	/**
 	 *	Sets connection parameters to default values
 	 */
-	void			Reset()
-					{
-						sock = -1;
-						port = 0;
-						address = "";
-					}
+	void				Reset()
+						{
+							sock = -1;
+							port = 0;
+							address = "";
+						}
 	/**
 	 *	Socket handle
 	 */
-	int				sock;
+	int					sock;
 	/**
 	 *	Port number
 	 */
-	unsigned short	port;
+	unsigned short		port;
 	/**
 	 *	Host ip or domain address
 	 */
-	std::string		address;
+	std::string			address;
 } connectionData;
 
 /**
@@ -91,11 +92,11 @@ public:
 	/**
 	 *	A constructor
 	 */
-					Host();
+						Host();
 	/**
 	 *	A destructor
 	 */
-					~Host();
+						~Host();
 	/**
 	 *	Connects to host on specified port
 	 *	@param address host domain name or ip address
@@ -103,22 +104,45 @@ public:
 	 *	@return true if successful, false otherwise
 	 *	@see Disconnect()
 	 */
-	bool			Connect(std::string address, unsigned short port);
+	bool				Connect(std::string address, unsigned short port);
 	/**
 	 *	Closes connection with host
 	 *	@return true if successful, false otherwise
 	 *	@see Connect()
 	 */
-	bool			Disconnect();
+	bool				Disconnect();
+	/**
+	 *	Receives specified number of bytes
+	 *	@param length number of bytes to receive
+	 *	@return number of bytes received, negative value on error
+	 *	@see Send()
+	 */
+	std::vector<char>	Receive(int length);
+	/**
+	 *	Sends specified number of data
+	 *	@param buffer buffer containing data
+	 *	@param length number of bytes to send
+	 *	@return number of bytes sended, negative value on error
+	 *	@see Receive()
+	 */
+	int					Send(const void *buffer, int length = 0);
 
 private:
 	/**
 	 *	Initializes Sockets library
 	 *	@return true if successful, false otherwise
 	 */
-	bool			InitializeSockets();
+	bool				InitializeSockets();
+	/**
+	 *	Receives specified number of bytes and saves it to buffer
+	 *	@param buffer buffer for data
+	 *	@param length number of bytes to receive
+	 *	@return number of bytes received, negative value on error
+	 *	@see Send()
+	 */
+	int					Receive(void *buffer, int length);
 	/**
 	 *	Structure holding basic connection parameters
 	 */
-	connectionData	hostData;
+	connectionData		hostData;
 };
