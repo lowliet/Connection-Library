@@ -54,30 +54,71 @@ License ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Mswsock.lib")
 
+/**
+ * Structure holding connection parameters
+ */
 typedef struct
 {
+	/**
+	 *	Sets connection parameters to default values
+	 */
 	void			Reset()
 					{
 						sock = -1;
 						port = 0;
 						address = "";
 					}
-
+	/**
+	 *	Socket handle
+	 */
 	int				sock;
+	/**
+	 *	Port number
+	 */
 	unsigned short	port;
+	/**
+	 *	Host ip or domain address
+	 */
 	std::string		address;
 } connectionData;
 
+/**
+ * Class providing simple functions for Sockets library
+ */
 class Host
 {
 public:
+	/**
+	 *	A constructor
+	 */
 					Host();
-
+	/**
+	 *	A destructor
+	 */
+					~Host();
+	/**
+	 *	Connects to host on specified port
+	 *	@param address host domain name or ip address
+	 *	@param port host port number
+	 *	@return true if successful, false otherwise
+	 *	@see Disconnect()
+	 */
 	bool			Connect(std::string address, unsigned short port);
+	/**
+	 *	Closes connection with host
+	 *	@return true if successful, false otherwise
+	 *	@see Connect()
+	 */
 	bool			Disconnect();
 
 private:
+	/**
+	 *	Initializes Sockets library
+	 *	@return true if successful, false otherwise
+	 */
 	bool			InitializeSockets();
-
+	/**
+	 *	Structure holding basic connection parameters
+	 */
 	connectionData	hostData;
 };

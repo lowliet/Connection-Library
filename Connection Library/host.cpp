@@ -5,6 +5,11 @@ Host::Host()
 	this->InitializeSockets();
 }
 
+Host::~Host()
+{
+	this->Disconnect();
+}
+
 bool Host::InitializeSockets()
 {
 	hostData.Reset();
