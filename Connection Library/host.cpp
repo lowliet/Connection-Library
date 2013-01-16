@@ -13,7 +13,7 @@ Host::~Host()
 bool Host::InitializeSockets()
 {
 	hostData.Reset();
-#if (defined(_WIN32) || defined(_WIN64)) 
+#if (defined(_WIN32) || defined(_WIN64))
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData))
 		return false;
@@ -62,7 +62,7 @@ bool Host::Disconnect()
 	return true;
 }
 
-std::vector<char> Host::Receive(int length)
+std::vector<char> Host::Receive(int length) const
 {
 	std::vector<char> data(length, 0);
 	int receivedBytes = -1;
@@ -70,15 +70,32 @@ std::vector<char> Host::Receive(int length)
 	return data;
 }
 
-int Host::Receive(void *buffer, int length)
+int Host::Receive(void *buffer, int length) const
 {
 	if (this->hostData.sock == -1) return -1;
 	return recv(this->hostData.sock, (char*)buffer, length, 0);
 }
 
-int Host::Send(const void *buffer, int length)
+int Host::Send(const void *buffer, int length) const
 {
 	if (this->hostData.sock == -1) return -1;
 	if (length == 0) length = strlen((const char*)buffer);
 	return send(this->hostData.sock, (const char*)buffer, length, 0);
+}
+
+bool Host::Listen(unsigned short port)
+{
+	sockaddr_in sockDest;
+
+	sockDest.sin_family = AF_INET;
+	sockDest.sin_addr.s_addr = htonl(INADDR_ANY);
+	sockDest.sin_port = htons(port);
+
+	if ((this->hostData.sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) return false;
+	if (bind(this->hostData.sock, (sockaddr*)&sockDest, sizeof(sockaddr)) == -1) return false;
+	if (listen(this->hostData.sock, SOMAXCONN) == -1) return false;
+	
+	this->hostData.port = port;
+
+	return true;
 }

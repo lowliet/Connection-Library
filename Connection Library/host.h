@@ -117,7 +117,7 @@ public:
 	 *	@return received data
 	 *	@see Send()
 	 */
-	std::vector<char>	Receive(int length);
+	std::vector<char>	Receive(int length) const;
 	/**
 	 *	Receives specified number of bytes and saves it in buffer
 	 *	@param buffer buffer for data
@@ -125,7 +125,7 @@ public:
 	 *	@return number of bytes received, negative value on error
 	 *	@see Send()
 	 */
-	int					Receive(void *buffer, int length);
+	int					Receive(void *buffer, int length) const;
 	/**
 	 *	Sends specified number of data
 	 *	@param buffer buffer containing data
@@ -133,7 +133,14 @@ public:
 	 *	@return number of bytes sended, negative value on error
 	 *	@see Receive()
 	 */
-	int					Send(const void *buffer, int length = 0);
+	int					Send(const void *buffer, int length = 0) const;
+	/**
+	 *	Listens on specified port
+	 *	@param port port number
+	 *	@return true if successful, false otherwise
+	 *	@see Accept()
+	 */
+	bool				Listen(unsigned short port);
 
 private:
 	/**

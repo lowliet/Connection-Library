@@ -29,17 +29,16 @@ int main()
 		std::vector<char> data = host.Receive(32);
 		printf("Readed: %i bytes\n", data.size());
 
-		for (unsigned int i = 0; i < data.size(); i++)
-			printf("%c", data[i]);
+		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
 		puts("");
 
-		if (host.Disconnect())
-			puts("connection closed");
-		else
-			puts("cannot close connection");
+		if (host.Listen(123)) puts("listening...");
+		else puts("cannot listen");
+
+		if (host.Disconnect()) puts("connection closed");
+		else puts("cannot close connection");
 	}
-	else
-		puts("cannot connect");
+	else puts("cannot connect");
 
 	puts("done");
 	getchar();
