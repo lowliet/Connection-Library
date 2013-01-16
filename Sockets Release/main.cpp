@@ -35,6 +35,14 @@ int main()
 		if (host.Listen(123)) puts("listening...");
 		else puts("cannot listen");
 
+		Host *con = host.Accept();
+		printf("Sended: %i bytes\n", con->Send("Connected to client...\n"));
+		data = con->Receive(32);
+		printf("Readed: %i bytes\n", data.size());
+		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
+		puts("");
+		delete con;
+
 		if (host.Disconnect()) puts("connection closed");
 		else puts("cannot close connection");
 	}

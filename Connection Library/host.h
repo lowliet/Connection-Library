@@ -10,7 +10,7 @@ Known Issues ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	1. none
 
 To Do ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
-	1. none
+	1. In Accept function convert ip from int to string
 
 License ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -141,6 +141,12 @@ public:
 	 *	@see Accept()
 	 */
 	bool				Listen(unsigned short port);
+	/**
+	 *	Accepts client connections
+	 *	@return pointer to connected host object (needs to be deleted afterwards)
+	 *	@see Listen()
+	 */
+	Host*				Accept();
 
 private:
 	/**

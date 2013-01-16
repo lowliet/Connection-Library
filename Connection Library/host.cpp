@@ -99,3 +99,25 @@ bool Host::Listen(unsigned short port)
 
 	return true;
 }
+
+Host* Host::Accept()
+{
+	sockaddr_in sockDesc;
+	int remoteSocket;
+
+#if (defined(_WIN32) || defined(_WIN64))
+	int size;
+#elif __linux
+	socklen_t size;
+#endif
+
+	size = sizeof(sockaddr);
+	if ((remoteSocket = accept(this->hostData.sock, (sockaddr*)&sockDesc, &size)) == -1) 
+		return 0;
+
+	Host *host = new Host();
+	host->hostData.sock = remoteSocket;
+	host->hostData.port = htons(sockDesc.sin_port);
+	//memcpy(&NewSock->ip, &sockDesc.sin_addr.s_addr, 4);
+	return host;
+}
