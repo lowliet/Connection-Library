@@ -1,8 +1,8 @@
-#include "Host.h"
+#include "host.h"
 
 Host::Host()
 {
-	hostData.Reset();
+	this->Reset();
 	this->InitializeSockets();
 }
 
@@ -25,9 +25,9 @@ bool Host::Connect(std::string address, unsigned short port)
 {
 	struct sockaddr_in sockInfo;
 
-	if (this->hostData.sock != -1) return false;
+	if (this->sock != -1) return false;
 
-	this->hostData.sock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	this->sock = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	
 	sockInfo.sin_family = AF_INET;
 	sockInfo.sin_addr.s_addr = inet_addr(address.c_str());
@@ -42,23 +42,23 @@ bool Host::Connect(std::string address, unsigned short port)
 	}
 	#pragma endregion
 
-	if (connect(this->hostData.sock, (struct sockaddr*)&sockInfo, sizeof(struct sockaddr)) == -1)
+	if (connect(this->sock, (struct sockaddr*)&sockInfo, sizeof(struct sockaddr)) == -1)
 	{
-		closesocket(this->hostData.sock);
+		closesocket(this->sock);
 		return false;
 	}	
 
-	hostData.port = port;
-	this->hostData.address = inet_ntoa(sockInfo.sin_addr);
+	port = port;
+	this->address = inet_ntoa(sockInfo.sin_addr);
 
 	return true;
 }
 
 bool Host::Disconnect()
 {
-	if (this->hostData.sock == -1) return false;
-	closesocket(this->hostData.sock);
-	hostData.Reset();
+	if (this->sock == -1) return false;
+	closesocket(this->sock);
+	Reset();
 	return true;
 }
 
@@ -72,15 +72,15 @@ std::vector<char> Host::Receive(int length) const
 
 int Host::Receive(void *buffer, int length) const
 {
-	if (this->hostData.sock == -1) return -1;
-	return recv(this->hostData.sock, (char*)buffer, length, 0);
+	if (this->sock == -1) return -1;
+	return recv(this->sock, (char*)buffer, length, 0);
 }
 
 int Host::Send(const void *buffer, int length) const
 {
-	if (this->hostData.sock == -1) return -1;
+	if (this->sock == -1) return -1;
 	if (length == 0) length = strlen((const char*)buffer);
-	return send(this->hostData.sock, (const char*)buffer, length, 0);
+	return send(this->sock, (const char*)buffer, length, 0);
 }
 
 bool Host::Listen(unsigned short port)
@@ -91,11 +91,11 @@ bool Host::Listen(unsigned short port)
 	sockInfo.sin_addr.s_addr = htonl(INADDR_ANY);
 	sockInfo.sin_port = htons(port);
 
-	if ((this->hostData.sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) return false;
-	if (bind(this->hostData.sock, (sockaddr*)&sockInfo, sizeof(sockaddr)) == -1) return false;
-	if (listen(this->hostData.sock, SOMAXCONN) == -1) return false;
+	if ((this->sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) return false;
+	if (bind(this->sock, (sockaddr*)&sockInfo, sizeof(sockaddr)) == -1) return false;
+	if (listen(this->sock, SOMAXCONN) == -1) return false;
 	
-	this->hostData.port = port;
+	this->port = port;
 
 	return true;
 }
@@ -112,22 +112,29 @@ Host* Host::Accept()
 #endif
 
 	size = sizeof(sockaddr);
-	if ((remoteSocket = accept(this->hostData.sock, (sockaddr*)&sockInfo, &size)) == -1) 
+	if ((remoteSocket = accept(this->sock, (sockaddr*)&sockInfo, &size)) == -1) 
 		return 0;
 
 	Host *host = new Host();
-	host->hostData.sock = remoteSocket;
-	host->hostData.port = htons(sockInfo.sin_port);
-	host->hostData.address = inet_ntoa(sockInfo.sin_addr);
+	host->sock = remoteSocket;
+	host->port = htons(sockInfo.sin_port);
+	host->address = inet_ntoa(sockInfo.sin_addr);
 	return host;
 }
 
 std::string Host::GetIPAddress() const
 {
-	return hostData.address;
+	return address;
 }
 
 int Host::Send(std::vector<char> data) const
 {
 	return this->Send((const void*)&data.front(), data.size());
+}
+
+void Host::Reset()
+{
+	this->sock = -1;
+	this->port = 0;
+	this->address.resize(16, '\0');
 }

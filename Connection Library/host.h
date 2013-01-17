@@ -56,34 +56,6 @@ License ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #pragma comment(lib, "Mswsock.lib")
 
 /**
- * Structure holding connection parameters
- */
-typedef struct
-{
-	/**
-	 *	Sets connection parameters to default values
-	 */
-	void				Reset()
-						{
-							sock = -1;
-							port = 0;
-							address.resize(16, '\0');
-						}
-	/**
-	 *	Socket handle
-	 */
-	int					sock;
-	/**
-	 *	Port number
-	 */
-	unsigned short		port;
-	/**
-	 *	Host ip address
-	 */
-	std::string			address;
-} connectionData;
-
-/**
  * Class providing simple functions for Sockets library
  */
 class Host
@@ -167,7 +139,20 @@ private:
 	 */
 	bool				InitializeSockets();
 	/**
-	 *	Structure holding basic connection parameters
+	 *	Sets connection parameters to default values
 	 */
-	connectionData		hostData;
+	void				Reset();
+
+	/**
+	 *	Socket handle
+	 */
+	int					sock;
+	/**
+	 *	Port number
+	 */
+	unsigned short		port;
+	/**
+	 *	Host ip address
+	 */
+	std::string			address;
 };
