@@ -127,13 +127,20 @@ public:
 	 */
 	int					Receive(void *buffer, int length) const;
 	/**
-	 *	Sends specified number of data
+	 *	Sends data to host
 	 *	@param buffer buffer containing data
-	 *	@param length number of bytes to send
+	 *	@param length number of bytes to send (if zero, buffer will be treated as a null-terminated string)
 	 *	@return number of bytes sended, negative value on error
 	 *	@see Receive()
 	 */
 	int					Send(const void *buffer, int length = 0) const;
+	/**
+	 *	Sends data to host
+	 *	@param data vector containing data
+	 *	@return number of bytes sended, negative value on error
+	 *	@see Receive()
+	 */
+	int					Send(std::vector<char> data) const;
 	/**
 	 *	Listens on specified port
 	 *	@param port port number

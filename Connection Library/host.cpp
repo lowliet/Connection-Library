@@ -126,3 +126,8 @@ std::string Host::GetIPAddress() const
 {
 	return hostData.address;
 }
+
+int Host::Send(std::vector<char> data) const
+{
+	return this->Send((const void*)&data.front(), data.size());
+}

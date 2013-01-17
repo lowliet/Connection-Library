@@ -35,9 +35,10 @@ int main()
 		if (host.Listen(123)) puts("listening...");
 		else puts("cannot listen");
 
+		data.push_back('\n');
 		Host *con = host.Accept();
 		printf("connected to %s\n", con->GetIPAddress().c_str());
-		printf("Sended: %i bytes\n", con->Send("Connected to client...\n"));
+		printf("Sended: %i bytes\n", con->Send(data));
 		data = con->Receive(32);
 		printf("Readed: %i bytes\n", data.size());
 		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
