@@ -67,7 +67,7 @@ typedef struct
 						{
 							sock = -1;
 							port = 0;
-							address = "";
+							address.resize(16, '\0');
 						}
 	/**
 	 *	Socket handle
@@ -78,7 +78,7 @@ typedef struct
 	 */
 	unsigned short		port;
 	/**
-	 *	Host ip or domain address
+	 *	Host ip address
 	 */
 	std::string			address;
 } connectionData;
@@ -147,6 +147,11 @@ public:
 	 *	@see Listen()
 	 */
 	Host*				Accept();
+	/**
+	 *	Returns IP address
+	 *	@return IP address as a string
+	 */
+	std::string			GetIPAddress() const;
 
 private:
 	/**

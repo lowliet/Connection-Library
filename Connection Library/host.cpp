@@ -2,6 +2,7 @@
 
 Host::Host()
 {
+	hostData.Reset();
 	this->InitializeSockets();
 }
 
@@ -12,7 +13,6 @@ Host::~Host()
 
 bool Host::InitializeSockets()
 {
-	hostData.Reset();
 #if (defined(_WIN32) || defined(_WIN64))
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData))
@@ -49,7 +49,7 @@ bool Host::Connect(std::string address, unsigned short port)
 	}	
 
 	hostData.port = port;
-	hostData.address = address;
+	this->hostData.address = inet_ntoa(sockInfo.sin_addr);
 
 	return true;
 }
@@ -85,14 +85,14 @@ int Host::Send(const void *buffer, int length) const
 
 bool Host::Listen(unsigned short port)
 {
-	sockaddr_in sockDest;
+	sockaddr_in sockInfo;
 
-	sockDest.sin_family = AF_INET;
-	sockDest.sin_addr.s_addr = htonl(INADDR_ANY);
-	sockDest.sin_port = htons(port);
+	sockInfo.sin_family = AF_INET;
+	sockInfo.sin_addr.s_addr = htonl(INADDR_ANY);
+	sockInfo.sin_port = htons(port);
 
 	if ((this->hostData.sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) return false;
-	if (bind(this->hostData.sock, (sockaddr*)&sockDest, sizeof(sockaddr)) == -1) return false;
+	if (bind(this->hostData.sock, (sockaddr*)&sockInfo, sizeof(sockaddr)) == -1) return false;
 	if (listen(this->hostData.sock, SOMAXCONN) == -1) return false;
 	
 	this->hostData.port = port;
@@ -102,7 +102,7 @@ bool Host::Listen(unsigned short port)
 
 Host* Host::Accept()
 {
-	sockaddr_in sockDesc;
+	sockaddr_in sockInfo;
 	int remoteSocket;
 
 #if (defined(_WIN32) || defined(_WIN64))
@@ -112,12 +112,17 @@ Host* Host::Accept()
 #endif
 
 	size = sizeof(sockaddr);
-	if ((remoteSocket = accept(this->hostData.sock, (sockaddr*)&sockDesc, &size)) == -1) 
+	if ((remoteSocket = accept(this->hostData.sock, (sockaddr*)&sockInfo, &size)) == -1) 
 		return 0;
 
 	Host *host = new Host();
 	host->hostData.sock = remoteSocket;
-	host->hostData.port = htons(sockDesc.sin_port);
-	//memcpy(&NewSock->ip, &sockDesc.sin_addr.s_addr, 4);
+	host->hostData.port = htons(sockInfo.sin_port);
+	host->hostData.address = inet_ntoa(sockInfo.sin_addr);
 	return host;
+}
+
+std::string Host::GetIPAddress() const
+{
+	return hostData.address;
 }
