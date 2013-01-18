@@ -23,7 +23,7 @@ int main()
 
 	if (host.Connect("localhost", 9000))
 	{
-		printf("connected to %s\n", host.GetIPAddress().c_str());
+		printf("connected to %s on %i\n", host.GetIPAddress().c_str(), host.GetPort());
 
 		printf("Sended: %i bytes\n", host.Send("This is test"));
 		std::vector<char> data = host.Receive(32);
@@ -37,7 +37,7 @@ int main()
 
 		data.push_back('\n');
 		Host *con = host.Accept();
-		printf("connected to %s\n", con->GetIPAddress().c_str());
+		printf("connected to %s on %i\n", con->GetIPAddress().c_str(), con->GetPort());
 		printf("Sended: %i bytes\n", con->Send(data));
 		data = con->Receive(32);
 		printf("Readed: %i bytes\n", data.size());

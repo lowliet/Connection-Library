@@ -10,7 +10,7 @@ Known Issues ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	1. none
 
 To Do ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
-	1. In Accept function convert ip from int to string
+	1. UDP handling
 
 License ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -131,6 +131,11 @@ public:
 	 *	@return IP address as a string
 	 */
 	std::string			GetIPAddress() const;
+	/**
+	 *	Returns port number
+	 *	@return port number
+	 */
+	unsigned short		GetPort() const;
 
 private:
 	/**

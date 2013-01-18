@@ -48,7 +48,7 @@ bool Host::Connect(std::string address, unsigned short port)
 		return false;
 	}	
 
-	port = port;
+	this->port = port;
 	this->address = inet_ntoa(sockInfo.sin_addr);
 
 	return true;
@@ -117,7 +117,7 @@ Host* Host::Accept()
 
 	Host *host = new Host();
 	host->sock = remoteSocket;
-	host->port = htons(sockInfo.sin_port);
+	host->port = this->port;
 	host->address = inet_ntoa(sockInfo.sin_addr);
 	return host;
 }
@@ -137,4 +137,9 @@ void Host::Reset()
 	this->sock = -1;
 	this->port = 0;
 	this->address.resize(16, '\0');
+}
+
+unsigned short Host::GetPort() const
+{
+	return this->port;
 }
