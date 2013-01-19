@@ -14,8 +14,6 @@ To Do ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	2. When listening, sending and receiving should be restricted
 
-	3. Ensure that all data has been received
-
 License ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -49,6 +47,7 @@ License ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	#include <sys/socket.h>
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
+	#include <errno.h>
 	#include <netdb.h>
 
 	#define	closesocket(sock)	close(sock)

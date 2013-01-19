@@ -85,7 +85,7 @@ int Host::Send(const void *buffer, int length) const
 	{
 		int ret = send(this->sock, (const char*)buffer, length, 0);
 		if (ret == 0) continue;
-		else if (ret == -1)
+		else if (ret < 0)
 		{
 		#if (defined(_WIN32) || defined(_WIN64))
 			if (WSAGetLastError() == WSAEWOULDBLOCK) continue;
@@ -179,7 +179,7 @@ bool Host::SendFile(std::string localFileName) const
 	#pragma endregion
 
 	#pragma region Sending file size and name
-	std::string fileSize(MAX_PATH, '\0');
+	std::string fileSize(256, '\0');
 	sprintf((char*)fileSize.c_str(), "F|%lu|%s", size, localFileName.substr(localFileName.rfind('\\') + 1).c_str());
 	if (this->Send(fileSize.c_str()) != strlen(fileSize.c_str()))
 	{
@@ -200,7 +200,7 @@ bool Host::SendFile(std::string localFileName) const
 	long bytesSended = 0;
 	std::string fileChunk(1024, '\0');
 	while (!feof(file))
-		bytesSended += this->Send(&fileChunk.front(), fread((char*)fileChunk.c_str(), 1, fileChunk.size() - 1, file));
+		bytesSended += this->Send(fileChunk.c_str(), fread((char*)fileChunk.c_str(), 1, fileChunk.size() - 1, file));
 	fclose(file);
 	#pragma endregion
 
