@@ -32,18 +32,21 @@ int main()
 		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
 		puts("");
 
+		if (host.SendFile("main.cpp")) puts("File sended");
+		else puts("Cannot send file");
+
 		if (host.Listen(123)) puts("listening...");
 		else puts("cannot listen");
 
 		data.push_back('\n');
-		Host *con = host.Accept();
-		printf("connected to %s on %i\n", con->GetIPAddress().c_str(), con->GetPort());
-		printf("Sended: %i bytes\n", con->Send(data));
-		data = con->Receive(32);
+		Host *client = host.Accept();
+		printf("connected to %s on %i\n", client->GetIPAddress().c_str(), client->GetPort());
+		printf("Sended: %i bytes\n", client->Send(data));
+		data = client->Receive(32);
 		printf("Readed: %i bytes\n", data.size());
 		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
 		puts("");
-		delete con;
+		delete client;
 
 		if (host.Disconnect()) puts("connection closed");
 		else puts("cannot close connection");

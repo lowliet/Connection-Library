@@ -80,7 +80,23 @@ int Host::Send(const void *buffer, int length) const
 {
 	if (this->sock == -1) return -1;
 	if (length == 0) length = strlen((const char*)buffer);
-	return send(this->sock, (const char*)buffer, length, 0);
+	int sended = 0;
+	do
+	{
+		int ret = send(this->sock, (const char*)buffer, length, 0);
+		if (ret == 0) continue;
+		else if (ret == -1)
+		{
+		#if (defined(_WIN32) || defined(_WIN64))
+			if (WSAGetLastError() == WSAEWOULDBLOCK) continue;
+		#elif __linux
+			if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) continue;
+		#endif
+			return -1;
+		}
+		sended += ret;
+	} while (sended < length);
+	return sended;
 }
 
 bool Host::Listen(unsigned short port)
@@ -142,4 +158,51 @@ void Host::Reset()
 unsigned short Host::GetPort() const
 {
 	return this->port;
+}
+
+bool Host::SendFile(std::string localFileName) const
+{
+	if (this->sock == -1) return false;
+	FILE *file = fopen(localFileName.c_str(), "rb");
+	if (file == NULL) return false;
+	
+	#pragma region File size check
+	fseek(file, 0, SEEK_END);
+	long size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	if (size <= 0)
+	{
+		fclose(file);
+		return false;
+	}
+	#pragma endregion
+
+	#pragma region Sending file size and name
+	std::string fileSize(MAX_PATH, '\0');
+	sprintf((char*)fileSize.c_str(), "F|%lu|%s", size, localFileName.substr(localFileName.rfind('\\') + 1).c_str());
+	if (this->Send(fileSize.c_str()) != strlen(fileSize.c_str()))
+	{
+		fclose(file);
+		return false;
+	}
+	#pragma endregion
+
+	#pragma region Waiting for proceed command
+	if (this->Receive(32).size() < 3) 
+	{
+		fclose(file);
+		return false;
+	}
+	#pragma endregion
+
+	#pragma region Sending a file
+	long bytesSended = 0;
+	std::string fileChunk(1024, '\0');
+	while (!feof(file))
+		bytesSended += this->Send(&fileChunk.front(), fread((char*)fileChunk.c_str(), 1, fileChunk.size() - 1, file));
+	fclose(file);
+	#pragma endregion
+
+	return (bytesSended == size);
 }

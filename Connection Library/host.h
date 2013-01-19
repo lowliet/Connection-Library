@@ -7,10 +7,14 @@ Synopsis ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 	Aim of this project is to provide foundation for using Sockets library.
 
 Known Issues ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
-	1. none
+	1. Getting file name works only on windows
 
 To Do ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
 	1. UDP handling
+
+	2. When listening, sending and receiving should be restricted
+
+	3. Ensure that all data has been received
 
 License ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -136,6 +140,13 @@ public:
 	 *	@return port number
 	 */
 	unsigned short		GetPort() const;
+	/**
+	 *	Sends local file to host
+	 *	@param localFileName absolute or relative file path, along with file name
+	 *	@return true if successful, false otherwise
+	 *	@see ReceiveFile()
+	 */
+	bool				SendFile(std::string localFileName) const;
 
 private:
 	/**
