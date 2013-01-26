@@ -5,6 +5,7 @@
 #endif
 
 #include "../Connection Library/host.h"
+#pragma comment(lib, "Connection Library")
 
 #if (defined(_WIN32) || defined(_WIN64)) && defined(_DEBUG)
 	#ifdef _DEBUG

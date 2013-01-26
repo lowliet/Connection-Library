@@ -14,6 +14,8 @@ To Do ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	2. When listening, sending and receiving should be restricted
 
+	3. Receiving a file
+
 License ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
