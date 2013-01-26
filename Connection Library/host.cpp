@@ -206,3 +206,21 @@ bool Host::SendFile(std::string localFileName) const
 
 	return (bytesSended == size);
 }
+
+Host::receiveStruct Host::Receive() const
+{
+	Host::receiveStruct ret;
+	std::string rec(32, '\0');
+
+	if (this->Receive((char*)rec.c_str(), 32) > 0)
+	{
+		ret.String = rec;
+		ret.Int = atoi(rec.c_str());
+		ret.Char = rec[0];
+		ret.LongInt = atol(rec.c_str());
+		ret.Double = atof(rec.c_str());
+		ret.UnsignedLongInt = strtoul(rec.c_str(), NULL, 0);
+		ret.isInitialized = true;
+	}
+	return ret;
+}

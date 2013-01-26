@@ -47,6 +47,9 @@ int main()
 		printf("Readed: %i bytes\n", data.size());
 		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
 		puts("");
+		Host::receiveStruct rec = client->Receive();
+		if (rec.isInitialized) printf("Received int: %i\n", rec.Int);
+		else puts("Cannot receive");
 		delete client;
 
 		if (host.Disconnect()) puts("connection closed");
