@@ -62,18 +62,25 @@ bool Host::Disconnect()
 	return true;
 }
 
-std::vector<char> Host::Receive(int length) const
+std::vector<unsigned char> Host::Receive(int length, bool exactLength) const
 {
-	std::vector<char> data(length, 0);
+	std::vector<unsigned char> data(length, 0);
 	int receivedBytes = -1;
-	data.resize((receivedBytes = this->Receive(&data.front(), length)) > 0 ? receivedBytes : 0);
+	data.resize((receivedBytes = this->Receive(&data.front(), length, exactLength)) > 0 ? receivedBytes : 0);
 	return data;
 }
 
-int Host::Receive(void *buffer, int length) const
+int Host::Receive(void *buffer, int length, bool exactLength) const
 {
 	if (this->sock == -1) return -1;
-	return recv(this->sock, (char*)buffer, length, 0);
+	int received = 0;
+	do
+	{
+		int rec = recv(this->sock, (char*)buffer + received, length - received, 0);
+		if (rec < 0) return -1;
+		received += rec;
+	} while ((received < length) && exactLength);
+	return received;
 }
 
 int Host::Send(const void *buffer, int length) const
@@ -143,7 +150,7 @@ std::string Host::GetIPAddress() const
 	return address;
 }
 
-int Host::Send(std::vector<char> data) const
+int Host::Send(std::vector<unsigned char> data) const
 {
 	return this->Send((const void*)&data.front(), data.size());
 }
@@ -210,9 +217,9 @@ bool Host::SendFile(std::string localFileName) const
 Host::receiveStruct Host::Receive() const
 {
 	Host::receiveStruct ret;
-	std::string rec(32, '\0');
+	std::string rec(sizeof(double), '\0');
 
-	if (this->Receive((char*)rec.c_str(), 32) > 0)
+	if (this->Receive((char*)rec.c_str(), rec.size()) > 0)
 	{
 		ret.String = rec;
 		ret.Int = atoi(rec.c_str());

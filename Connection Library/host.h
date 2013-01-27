@@ -16,6 +16,8 @@ To Do ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	3. Receiving a file
 
+	4. In Receive function, recv may return 0
+
 License ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -74,126 +76,128 @@ public:
 		/**
 		 *	A constructor
 		 */
-							ReceiveStruct() : Int(0), Char(0), String(""), Double(0.0), LongInt(0), UnsignedLongInt(0), isInitialized(false) {}
-		int					Int;
-		char				Char;
-		std::string			String;
-		double				Double;
-		long int			LongInt;
-		unsigned long int	UnsignedLongInt;
-		bool				isInitialized;
+								ReceiveStruct() : Int(0), Char(0), String(""), Double(0.0), LongInt(0), UnsignedLongInt(0), isInitialized(false) {}
+		int						Int;
+		char					Char;
+		std::string				String;
+		double					Double;
+		long int				LongInt;
+		unsigned long int		UnsignedLongInt;
+		bool					isInitialized;
 	} receiveStruct;
 
 	/**
 	 *	A constructor
 	 */
-						Host();
+								Host();
 	/**
 	 *	A destructor
 	 */
-						~Host();
+								~Host();
 	/**
 	 *	Connects to host on specified port
-	 *	@param address host domain name or ip address
+	 *	@param address host domain name or IP address
 	 *	@param port host port number
 	 *	@return true if successful, false otherwise
 	 *	@see Disconnect()
 	 */
-	bool				Connect(std::string address, unsigned short port);
+	bool						Connect(std::string address, unsigned short port);
 	/**
 	 *	Closes connection with host
 	 *	@return true if successful, false otherwise
 	 *	@see Connect()
 	 */
-	bool				Disconnect();
+	bool						Disconnect();
 	/**
 	 *	Receives single value
 	 *	@return received structure
 	 *	@see Send()
 	 */
-	Host::receiveStruct	Receive() const;
+	Host::receiveStruct			Receive() const;
 	/**
 	 *	Receives specified number of bytes
 	 *	@param length number of bytes to receive
+	 *	@param exactLength when true, function will not return until exact number of bytes is read
 	 *	@return received data
 	 *	@see Send()
 	 */
-	std::vector<char>	Receive(int length) const;
+	std::vector<unsigned char>	Receive(int length, bool exactLength = false) const;
 	/**
 	 *	Receives specified number of bytes and saves it in buffer
 	 *	@param buffer buffer for data
 	 *	@param length number of bytes to receive
+	 *	@param exactLength when true, function will not return until exact number of bytes is read
 	 *	@return number of bytes received, negative value on error
 	 *	@see Send()
 	 */
-	int					Receive(void *buffer, int length) const;
+	int							Receive(void *buffer, int length, bool exactLength = false) const;
 	/**
 	 *	Sends data to host
 	 *	@param buffer buffer containing data
 	 *	@param length number of bytes to send (if zero, buffer will be treated as a null-terminated string)
-	 *	@return number of bytes sended, negative value on error
+	 *	@return number of bytes sent, negative value on error
 	 *	@see Receive()
 	 */
-	int					Send(const void *buffer, int length = 0) const;
+	int							Send(const void *buffer, int length = 0) const;
 	/**
 	 *	Sends data to host
 	 *	@param data vector containing data
-	 *	@return number of bytes sended, negative value on error
+	 *	@return number of bytes sent, negative value on error
 	 *	@see Receive()
 	 */
-	int					Send(std::vector<char> data) const;
+	int							Send(std::vector<unsigned char> data) const;
 	/**
 	 *	Listens on specified port
 	 *	@param port port number
 	 *	@return true if successful, false otherwise
 	 *	@see Accept()
 	 */
-	bool				Listen(unsigned short port);
+	bool						Listen(unsigned short port);
 	/**
 	 *	Accepts client connections
 	 *	@return pointer to connected host object (needs to be deleted afterwards)
 	 *	@see Listen()
 	 */
-	Host*				Accept();
+	Host*						Accept();
 	/**
 	 *	Returns IP address
 	 *	@return IP address as a string
 	 */
-	std::string			GetIPAddress() const;
+	std::string					GetIPAddress() const;
 	/**
 	 *	Returns port number
 	 *	@return port number
 	 */
-	unsigned short		GetPort() const;
+	unsigned short				GetPort() const;
 	/**
 	 *	Sends local file to host
 	 *	@param localFileName absolute or relative file path, along with file name
 	 *	@return true if successful, false otherwise
 	 *	@see ReceiveFile()
 	 */
-	bool				SendFile(std::string localFileName) const;
+	bool						SendFile(std::string localFileName) const;
 
 private:
 	/**
 	 *	Initializes Sockets library
 	 *	@return true if successful, false otherwise
 	 */
-	bool				InitializeSockets();
+	bool						InitializeSockets();
 	/**
 	 *	Sets connection parameters to default values
 	 */
-	void				Reset();
+	void						Reset();
 
 	/**
 	 *	Socket handle
 	 */
-	int					sock;
+	int							sock;
 	/**
 	 *	Port number
 	 */
-	unsigned short		port;
+	unsigned short				port;
 	/**
-	 *	Host ip address
+	 *	Host IP address
 	 */
-	std::string			address;
+	std::string					address;
 };

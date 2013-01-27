@@ -27,7 +27,7 @@ int main()
 		printf("connected to %s on %i\n", host.GetIPAddress().c_str(), host.GetPort());
 
 		printf("Sended: %i bytes\n", host.Send("This is test"));
-		std::vector<char> data = host.Receive(32);
+		std::vector<unsigned char> data = host.Receive(32);
 		printf("Readed: %i bytes\n", data.size());
 
 		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
