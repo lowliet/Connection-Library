@@ -69,24 +69,6 @@ class Host
 {
 public:
 	/**
-	 *	Structure used in Receive function
-	 */
-	typedef struct ReceiveStruct
-	{
-		/**
-		 *	A constructor
-		 */
-								ReceiveStruct() : Int(0), Char(0), String(""), Double(0.0), LongInt(0), UnsignedLongInt(0), isInitialized(false) {}
-		int						Int;
-		char					Char;
-		std::string				String;
-		double					Double;
-		long int				LongInt;
-		unsigned long int		UnsignedLongInt;
-		bool					isInitialized;
-	} receiveStruct;
-
-	/**
 	 *	A constructor
 	 */
 								Host();
@@ -109,11 +91,11 @@ public:
 	 */
 	bool						Disconnect();
 	/**
-	 *	Receives single value
-	 *	@return received structure
+	 *	Receives single text line (not longer than 1024 bytes)
+	 *	@return received text
 	 *	@see Send()
 	 */
-	Host::receiveStruct			Receive() const;
+	std::string					Receive() const;
 	/**
 	 *	Receives specified number of bytes
 	 *	@param length number of bytes to receive

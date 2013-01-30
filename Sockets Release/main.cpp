@@ -33,6 +33,8 @@ int main()
 		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
 		puts("");
 
+		printf("Received text: %s\n", host.Receive().c_str());
+
 		if (host.SendFile("main.cpp")) puts("File sended");
 		else puts("Cannot send file");
 
@@ -47,9 +49,10 @@ int main()
 		printf("Readed: %i bytes\n", data.size());
 		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
 		puts("");
-		Host::receiveStruct rec = client->Receive();
-		if (rec.isInitialized) printf("Received int: %i\n", rec.Int);
-		else puts("Cannot receive");
+		
+		if (client->Disconnect()) puts("connection closed");
+		else puts("cannot close connection");
+
 		delete client;
 
 		if (host.Disconnect()) puts("connection closed");
