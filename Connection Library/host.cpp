@@ -220,3 +220,8 @@ std::string Host::Receive() const
 	this->Receive((char*)ret.c_str(), ret.size());
 	return ret;
 }
+
+bool Host::Send(std::string data) const
+{
+	return (this->Send(data.c_str(), strlen(data.c_str())) == strlen(data.c_str()));
+}

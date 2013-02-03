@@ -61,6 +61,7 @@ License ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Mswsock.lib")
+#pragma warning (disable : 4996)
 
 /**
  *	Class providing simple functions for Sockets library
@@ -128,6 +129,13 @@ public:
 	 *	@see Receive()
 	 */
 	int							Send(std::vector<unsigned char> data) const;
+	/**
+	 *	Sends null terminated string to host
+	 *	@param data string containing null terminated text
+	 *	@return true if whole string was sent, false otherwise
+	 *	@see Receive()
+	 */
+	bool						Send(std::string data) const;
 	/**
 	 *	Listens on specified port
 	 *	@param port port number
