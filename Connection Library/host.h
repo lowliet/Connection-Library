@@ -135,7 +135,7 @@ public:
 	 *	@return true if whole string was sent, false otherwise
 	 *	@see Receive()
 	 */
-	bool						Send(std::string data) const;
+	int							Send(std::string data) const;
 	/**
 	 *	Listens on specified port
 	 *	@param port port number

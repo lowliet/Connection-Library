@@ -221,7 +221,7 @@ std::string Host::Receive() const
 	return ret;
 }
 
-bool Host::Send(std::string data) const
+int Host::Send(std::string data) const
 {
-	return (this->Send(data.c_str(), strlen(data.c_str())) == strlen(data.c_str()));
+	return this->Send(data.c_str(), strlen(data.c_str()));
 }
