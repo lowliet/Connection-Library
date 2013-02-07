@@ -22,38 +22,36 @@ int main()
 
 	Host host;
 
-	if (host.Connect("localhost", 9000))
+	if (host.Connect("ec2-54-228-13-219.eu-west-1.compute.amazonaws.com", 9000))
 	{
 		printf("connected to %s on %i\n", host.GetIPAddress().c_str(), host.GetPort());
+		printf("Sent: %i bytes\n", host.Send("This is test message"));
+		printf("Read: %s\n", host.Receive().c_str());
+		printf("Sent: %i bytes\n", host.Send("Last message"));
+		printf("Read: %s\n", host.Receive().c_str());
 
-		printf("Sended: %i bytes\n", host.Send("This is test"));
-		std::vector<unsigned char> data = host.Receive(32);
-		printf("Readed: %i bytes\n", data.size());
+		/*printf("Sent text: %s\n", host.Send("This is reply") ? "true" : "false");
+		printf("Received text: %s\n", host.Receive().c_str());*/
 
-		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
-		puts("");
-
-		printf("Received text: %s\n", host.Receive().c_str());
-
-		if (host.SendFile("main.cpp")) puts("File sended");
+		/*if (host.SendFile("main.cpp")) puts("File sended");
 		else puts("Cannot send file");
 
 		if (host.Listen(123)) puts("listening...");
-		else puts("cannot listen");
+		else puts("cannot listen");*/
 
-		data.push_back('\n');
+		/*data.push_back('\n');
 		Host *client = host.Accept();
 		printf("connected to %s on %i\n", client->GetIPAddress().c_str(), client->GetPort());
-		printf("Sended: %i bytes\n", client->Send(data));
+		printf("Sent: %i bytes\n", client->Send(data));
 		data = client->Receive(32);
-		printf("Readed: %i bytes\n", data.size());
+		printf("Read: %i bytes\n", data.size());
 		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
 		puts("");
 		
 		if (client->Disconnect()) puts("connection closed");
 		else puts("cannot close connection");
 
-		delete client;
+		delete client;*/
 
 		if (host.Disconnect()) puts("connection closed");
 		else puts("cannot close connection");

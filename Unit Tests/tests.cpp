@@ -1,6 +1,12 @@
 #include "../Connection Library/host.h"
 #include "WinUnit\Include\WinUnit.h"
 
+BEGIN_TEST(Listening) {
+	Host host;
+	
+	WIN_ASSERT_TRUE(host.Listen(100));
+} END_TEST
+
 BEGIN_TEST(Connecting) {
 	Host host;
 	
@@ -13,6 +19,7 @@ BEGIN_TEST(Connecting) {
 
 BEGIN_TEST(Disconnecting) {
 	Host host;
+
 	WIN_ASSERT_FALSE(host.Disconnect());
 } END_TEST
 
