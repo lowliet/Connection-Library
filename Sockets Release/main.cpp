@@ -14,51 +14,77 @@
 	#endif
 #endif
 
+void ClientThread(LPVOID lpParam)
+{
+	Sleep(1000);
+
+	Host client;
+
+	if (client.Connect("localhost", 0xff))
+	{
+		printf("Client | connected to %s on %i\n", client.GetIPAddress().c_str(), client.GetPort());
+		printf("Client | sent: %i bytes\n", client.Send("Data from client"));
+		printf("Client | read: %s\n", client.Receive().c_str());
+		printf("Client | sent: %i bytes\n", client.Send("Last message from client"));
+		printf("Client | read: %s\n", client.Receive().c_str());
+
+		if (client.Disconnect()) puts("Client | connection closed");
+		else puts("Client | cannot close connection");
+	}
+	else puts("Client | cannot connect");
+
+	return;
+}
+
+void ServerThread(LPVOID lpParam)
+{
+	Host server;
+
+	if (server.Listen(0xff)) 
+	{
+		puts("Server | listening...");
+
+		Host *connectedHost = server.Accept();
+
+		printf("Server | connected to %s on %i\n", connectedHost->GetIPAddress().c_str(), connectedHost->GetPort());
+		printf("Server | read: %s\n", connectedHost->Receive().c_str());
+		printf("Server | sent: %i bytes\n", connectedHost->Send("Data from server"));
+		printf("Server | read: %s\n", connectedHost->Receive().c_str());
+		printf("Server | sent: %i bytes\n", connectedHost->Send("Last message from server"));
+		
+		if (connectedHost->Disconnect()) puts("Server | connection closed");
+		else puts("Server | cannot close connection");
+
+		delete connectedHost;
+
+		if (server.Disconnect()) puts("Server | socket closed");
+		else puts("Server | cannot close socket");
+	}
+	else puts("Server | cannot listen");
+
+	return;
+}
+
 int main()
 {
 	#if (defined(_WIN32) || defined(_WIN64)) && defined(_DEBUG)
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	#endif
 
-	Host host;
+	DWORD threadCode;
 
-	if (host.Connect("ec2-54-228-13-219.eu-west-1.compute.amazonaws.com", 9000))
-	{
-		printf("connected to %s on %i\n", host.GetIPAddress().c_str(), host.GetPort());
-		printf("Sent: %i bytes\n", host.Send("This is test message"));
-		printf("Read: %s\n", host.Receive().c_str());
-		printf("Sent: %i bytes\n", host.Send("Last message"));
-		printf("Read: %s\n", host.Receive().c_str());
+	HANDLE handleServer = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ServerThread, 0, 0, &threadCode);
+	HANDLE handleClient = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ClientThread, 0, 0, &threadCode);
 
-		/*printf("Sent text: %s\n", host.Send("This is reply") ? "true" : "false");
-		printf("Received text: %s\n", host.Receive().c_str());*/
+	if (WaitForSingleObject(handleClient, 10000) != WAIT_OBJECT_0)
+		TerminateThread(handleClient, 0);
+	CloseHandle(handleClient);
 
-		/*if (host.SendFile("main.cpp")) puts("File sended");
-		else puts("Cannot send file");
+	if (WaitForSingleObject(handleServer, 10000) != WAIT_OBJECT_0)
+		TerminateThread(handleServer, 0);
+	CloseHandle(handleServer);
 
-		if (host.Listen(123)) puts("listening...");
-		else puts("cannot listen");*/
-
-		/*data.push_back('\n');
-		Host *client = host.Accept();
-		printf("connected to %s on %i\n", client->GetIPAddress().c_str(), client->GetPort());
-		printf("Sent: %i bytes\n", client->Send(data));
-		data = client->Receive(32);
-		printf("Read: %i bytes\n", data.size());
-		for (unsigned int i = 0; i < data.size(); i++) printf("%c", data[i]);
-		puts("");
-		
-		if (client->Disconnect()) puts("connection closed");
-		else puts("cannot close connection");
-
-		delete client;*/
-
-		if (host.Disconnect()) puts("connection closed");
-		else puts("cannot close connection");
-	}
-	else puts("cannot connect");
-
-	puts("done");
+	printf("======================\ndone");
 	getchar();
 	return 0;
 }
