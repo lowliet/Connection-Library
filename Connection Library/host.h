@@ -64,7 +64,7 @@ License ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #pragma warning (disable : 4996)
 
 /**
- *	Class providing simple functions for Sockets library
+ *	Class providing basic functions for Sockets library
  */
 class Host
 {
@@ -145,7 +145,7 @@ public:
 	bool						Listen(unsigned short port);
 	/**
 	 *	Accepts client connections
-	 *	@return pointer to connected host object (needs to be deleted afterwards)
+	 *	@return pointer to connected host object (needs to be deleted afterwards) or NULL pointer
 	 *	@see Listen()
 	 */
 	Host*						Accept();
@@ -177,7 +177,6 @@ private:
 	 *	Sets connection parameters to default values
 	 */
 	void						Reset();
-
 	/**
 	 *	Socket handle
 	 */

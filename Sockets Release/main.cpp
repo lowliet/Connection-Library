@@ -32,8 +32,6 @@ void ClientThread(LPVOID lpParam)
 		else puts("Client | cannot close connection");
 	}
 	else puts("Client | cannot connect");
-
-	return;
 }
 
 void ServerThread(LPVOID lpParam)
@@ -61,8 +59,6 @@ void ServerThread(LPVOID lpParam)
 		else puts("Server | cannot close socket");
 	}
 	else puts("Server | cannot listen");
-
-	return;
 }
 
 int main()

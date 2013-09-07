@@ -45,6 +45,7 @@ bool Host::Connect(std::string address, unsigned short port)
 	if (connect(this->sock, (struct sockaddr*)&sockInfo, sizeof(struct sockaddr)) == -1)
 	{
 		closesocket(this->sock);
+		Reset();
 		return false;
 	}	
 
@@ -108,6 +109,8 @@ int Host::Send(const void *buffer, int length) const
 
 bool Host::Listen(unsigned short port)
 {
+	if (port == 0) return false;
+
 	sockaddr_in sockInfo;
 
 	sockInfo.sin_family = AF_INET;
