@@ -9,5 +9,5 @@ mingw:
 	g++ -c "../Connection Library/host.cpp" -o libhost.o
 	ar rcs libhost.a libhost.o
 	g++ "../Sockets Release/main.cpp" -L. -lhost -lws2_32 -O2 -o Release
-	del /Q libhost.*
-	move Release.exe "../Release/"
+	rm libhost.*
+	mv Release.exe ../Release/

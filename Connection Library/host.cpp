@@ -190,7 +190,7 @@ bool Host::SendFile(std::string localFileName) const
 
 	#pragma region Sending file size and name
 	std::string fileSize(256, '\0');
-	sprintf((char*)fileSize.c_str(), "F|%lu|%s", size, localFileName.substr(localFileName.rfind('\\') + 1).c_str());
+	sprintf((char*)fileSize.c_str(), "F|%lu|%s", size, localFileName.c_str());
 	if (this->Send(fileSize.c_str()) != strlen(fileSize.c_str()))
 	{
 		fclose(file);
@@ -199,7 +199,7 @@ bool Host::SendFile(std::string localFileName) const
 	#pragma endregion
 
 	#pragma region Waiting for proceed command
-	if (this->Receive(32).size() < 3) 
+	if (this->Receive().size() < 3) 
 	{
 		fclose(file);
 		return false;
@@ -214,13 +214,50 @@ bool Host::SendFile(std::string localFileName) const
 	fclose(file);
 	#pragma endregion
 
-	return (bytesSended == size);
+	return bytesSended == size;
 }
 
-std::string Host::Receive() const
+bool Host::ReceiveFile(std::string &localFileName) const
 {
-	std::string ret(1024, '\0');
-	this->Receive((char*)ret.c_str(), ret.size());
+	if (this->sock == -1) return false;
+	std::string fileName(512, '\0');
+	long fileSize, bytesReceived = 0;
+	char sign;
+
+	#pragma region Receiving file size and name
+	sscanf(this->Receive().c_str(), "%c|%lu|%s", &sign, &fileSize, (char*)fileName.c_str());
+	#pragma endregion
+
+	FILE *file = fopen(localFileName.length() == 0 ? fileName.c_str() : localFileName.c_str(), "wb");
+	if (file == NULL) return false;
+
+	if (localFileName.length() == 0)
+		localFileName = fileName;
+
+	this->Send("PROCEED");
+
+	#pragma region Receiving a file
+	do
+	{
+		std::vector<unsigned char> fileChunk = this->Receive(fileSize - bytesReceived, true);
+		if (fileChunk.size() > 0)
+		{
+			bytesReceived += fileChunk.size();
+			fwrite((const unsigned char*)fileChunk.data(), 1, fileChunk.size(), file);
+		}
+		else break;
+	} while (bytesReceived < fileSize);
+	#pragma endregion
+
+	fclose(file);
+
+	return bytesReceived == fileSize;
+}
+
+std::string Host::Receive(int receiveBytesCount) const
+{
+	std::string ret(receiveBytesCount == 0 ? 1024 : receiveBytesCount, '\0');
+	this->Receive((char*)ret.c_str(), receiveBytesCount == 0 ? ret.size() : receiveBytesCount, receiveBytesCount > 0);
 	return ret;
 }
 

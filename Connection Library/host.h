@@ -18,6 +18,8 @@ To Do ][::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 	4. In Receive function, recv may return 0
 
+	5. Using CRC or MD5 while sending files
+
 License ][:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::]
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -96,7 +98,7 @@ public:
 	 *	@return received text
 	 *	@see Send()
 	 */
-	std::string					Receive() const;
+	std::string					Receive(int receiveBytesCount = 0) const;
 	/**
 	 *	Receives specified number of bytes
 	 *	@param length number of bytes to receive
@@ -104,7 +106,7 @@ public:
 	 *	@return received data
 	 *	@see Send()
 	 */
-	std::vector<unsigned char>	Receive(int length, bool exactLength = false) const;
+	std::vector<unsigned char>	Receive(int length, bool exactLength) const;
 	/**
 	 *	Receives specified number of bytes and saves it in buffer
 	 *	@param buffer buffer for data
@@ -166,6 +168,7 @@ public:
 	 *	@see ReceiveFile()
 	 */
 	bool						SendFile(std::string localFileName) const;
+	bool						ReceiveFile(std::string &localFileName) const;
 
 private:
 	/**

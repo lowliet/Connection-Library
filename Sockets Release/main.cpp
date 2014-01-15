@@ -27,6 +27,7 @@ void ClientThread(LPVOID lpParam)
 		printf("Client | read: %s\n", client.Receive().c_str());
 		printf("Client | sent: %i bytes\n", client.Send("Last message from client"));
 		printf("Client | read: %s\n", client.Receive().c_str());
+		printf("Client | file: %s\n", client.SendFile("test.txt") ? "good" : "bad");
 
 		if (client.Disconnect()) puts("Client | connection closed");
 		else puts("Client | cannot close connection");
@@ -37,6 +38,7 @@ void ClientThread(LPVOID lpParam)
 void ServerThread(LPVOID lpParam)
 {
 	Host server;
+	std::string file = "text.out";
 
 	if (server.Listen(0xff)) 
 	{
@@ -49,7 +51,9 @@ void ServerThread(LPVOID lpParam)
 		printf("Server | sent: %i bytes\n", connectedHost->Send("Data from server"));
 		printf("Server | read: %s\n", connectedHost->Receive().c_str());
 		printf("Server | sent: %i bytes\n", connectedHost->Send("Last message from server"));
-		
+		printf("Server | file: %s | name: ", connectedHost->ReceiveFile(file) ? "good" : "bad");
+		puts(file.c_str());
+
 		if (connectedHost->Disconnect()) puts("Server | connection closed");
 		else puts("Server | cannot close connection");
 
