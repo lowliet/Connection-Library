@@ -72,11 +72,11 @@ class Host
 {
 public:
 	/**
-	 *	A constructor
+	 *	Constructor
 	 */
 								Host();
 	/**
-	 *	A destructor
+	 *	Destructor
 	 */
 								~Host();
 	/**
@@ -168,6 +168,11 @@ public:
 	 *	@see ReceiveFile()
 	 */
 	bool						SendFile(std::string localFileName) const;
+	/**
+	 *	Receives file
+	 *	@param localFileName desired file name. If empty, it will return original file name
+	 *	@return true if receiving was successful, false otherwise
+	 */
 	bool						ReceiveFile(std::string &localFileName) const;
 
 private:

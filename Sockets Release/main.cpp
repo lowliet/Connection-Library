@@ -1,11 +1,9 @@
+#pragma region Memory leaks tracing
 #if (defined(_WIN32) || defined(_WIN64)) && defined(_DEBUG)
 	#define _CRTDBG_MAP_ALLOC
 	#include <stdlib.h>
 	#include <crtdbg.h>
 #endif
-
-#include "../Connection Library/host.h"
-#pragma comment(lib, "Connection Library")
 
 #if (defined(_WIN32) || defined(_WIN64)) && defined(_DEBUG)
 	#ifdef _DEBUG
@@ -13,6 +11,10 @@
 		#define new DEBUG_NEW
 	#endif
 #endif
+#pragma endregion
+
+#include "../Connection Library/host.h"
+#pragma comment(lib, "Connection Library")
 
 void ClientThread(LPVOID lpParam)
 {
@@ -27,7 +29,7 @@ void ClientThread(LPVOID lpParam)
 		printf("Client | read: %s\n", client.Receive().c_str());
 		printf("Client | sent: %i bytes\n", client.Send("Last message from client"));
 		printf("Client | read: %s\n", client.Receive().c_str());
-		printf("Client | file: %s\n", client.SendFile("test.txt") ? "good" : "bad");
+		printf("Client | file: %s\n", client.SendFile("in.log") ? "good" : "bad");
 
 		if (client.Disconnect()) puts("Client | connection closed");
 		else puts("Client | cannot close connection");
@@ -38,7 +40,7 @@ void ClientThread(LPVOID lpParam)
 void ServerThread(LPVOID lpParam)
 {
 	Host server;
-	std::string file = "text.out";
+	std::string file = "out.log";
 
 	if (server.Listen(0xff)) 
 	{
