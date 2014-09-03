@@ -63,14 +63,6 @@ bool Host::Disconnect()
 	return true;
 }
 
-std::vector<unsigned char> Host::Receive(int length, bool exactLength) const
-{
-	std::vector<unsigned char> data(length, 0);
-	int receivedBytes = -1;
-	data.resize((receivedBytes = this->Receive(&data.front(), length, exactLength)) > 0 ? receivedBytes : 0);
-	return data;
-}
-
 int Host::Receive(void *buffer, int length, bool exactLength) const
 {
 	if (this->sock == -1) return -1;
@@ -239,8 +231,8 @@ bool Host::ReceiveFile(std::string &localFileName) const
 	#pragma region Receiving a file
 	do
 	{
-		std::vector<unsigned char> fileChunk = this->Receive(fileSize - bytesReceived, true);
-		if (fileChunk.size() > 0)
+		std::vector<unsigned char> fileChunk(fileSize - bytesReceived);
+		if (Receive(fileChunk.data(), fileChunk.size(), true) && fileChunk.size())
 		{
 			bytesReceived += fileChunk.size();
 			fwrite((const unsigned char*)fileChunk.data(), 1, fileChunk.size(), file);
@@ -254,10 +246,11 @@ bool Host::ReceiveFile(std::string &localFileName) const
 	return bytesReceived == fileSize;
 }
 
-std::string Host::Receive(int receiveBytesCount) const
+std::string Host::Receive(int length, bool exactLength) const
 {
-	std::string ret(receiveBytesCount == 0 ? 1024 : receiveBytesCount, '\0');
-	this->Receive((char*)ret.c_str(), receiveBytesCount == 0 ? ret.size() : receiveBytesCount, receiveBytesCount > 0);
+	std::string ret(length == 0 ? 2048 : length, '\0');
+	int bytesReceived = this->Receive((char*)ret.c_str(), ret.size(), exactLength);
+	if (bytesReceived >= 0) ret.resize(bytesReceived);
 	return ret;
 }
 

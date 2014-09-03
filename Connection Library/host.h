@@ -94,19 +94,13 @@ public:
 	 */
 	bool						Disconnect();
 	/**
-	 *	Receives single text line (not longer than 1024 bytes)
+	 *	Receives single text line
+	 *	@param length number of bytes to receive, if number is not specified, data being received is expected to be no longer than 2048 bytes
+	 *	@param exactLength when true, function will not return until exact number of bytes is read
 	 *	@return received text
 	 *	@see Send()
 	 */
-	std::string					Receive(int receiveBytesCount = 0) const;
-	/**
-	 *	Receives specified number of bytes
-	 *	@param length number of bytes to receive
-	 *	@param exactLength when true, function will not return until exact number of bytes is read
-	 *	@return received data
-	 *	@see Send()
-	 */
-	std::vector<unsigned char>	Receive(int length, bool exactLength) const;
+	std::string					Receive(int length = 0, bool exactLength = false) const;
 	/**
 	 *	Receives specified number of bytes and saves it in buffer
 	 *	@param buffer buffer for data

@@ -66,8 +66,8 @@ void ServerThread(LPVOID lpParam)
 			std::string receive = connectedHost->Receive();
 			connectedHost->Send(receive);
 
-			std::vector<unsigned char> receiveVec = connectedHost->Receive(32, false);
-			connectedHost->Send(receiveVec);
+			std::string receiveVec = connectedHost->Receive(32, false);
+			connectedHost->Send(receiveVec.data(), receiveVec.size());
 		}
 	
 		connectedHost->Disconnect();
