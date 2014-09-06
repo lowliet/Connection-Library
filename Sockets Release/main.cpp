@@ -16,10 +16,8 @@
 #include "../Connection Library/host.h"
 #pragma comment(lib, "Connection Library")
 
-void ClientThread(LPVOID lpParam)
+void* ClientThread(void*)
 {
-	Sleep(1000);
-
 	Host client;
 
 	if (client.Connect("localhost", 0xff))
@@ -35,9 +33,11 @@ void ClientThread(LPVOID lpParam)
 		else puts("Client | cannot close connection");
 	}
 	else puts("Client | cannot connect");
+
+	return NULL;
 }
 
-void ServerThread(LPVOID lpParam)
+void* ServerThread(void*)
 {
 	Host server;
 	std::string file = "out.log";
@@ -65,18 +65,21 @@ void ServerThread(LPVOID lpParam)
 		else puts("Server | cannot close socket");
 	}
 	else puts("Server | cannot listen");
+
+	return NULL;
 }
 
 int main()
 {
-	#if (defined(_WIN32) || defined(_WIN64)) && defined(_DEBUG)
-		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	#endif
+#if (defined(_WIN32) || defined(_WIN64)) && defined(_DEBUG)
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 
-	DWORD threadCode;
-
-	HANDLE handleServer = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ServerThread, 0, 0, &threadCode);
-	HANDLE handleClient = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ClientThread, 0, 0, &threadCode);
+#if (defined(_WIN32) || defined(_WIN64))
+	/* Running threads on Windows */
+	HANDLE handleServer = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) ServerThread, NULL, NULL, NULL);
+	Sleep(1000);
+	HANDLE handleClient = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) ClientThread, NULL, NULL, NULL);
 
 	if (WaitForSingleObject(handleClient, 10000) != WAIT_OBJECT_0)
 		TerminateThread(handleClient, 0);
@@ -85,6 +88,17 @@ int main()
 	if (WaitForSingleObject(handleServer, 10000) != WAIT_OBJECT_0)
 		TerminateThread(handleServer, 0);
 	CloseHandle(handleServer);
+#else
+	/* Running threads on Linux */
+	pthread_t client, server;
+
+	pthread_create(&server, NULL, &ServerThread, NULL);
+	sleep(1);
+	pthread_create(&client, NULL, &ClientThread, NULL);
+
+	pthread_join(client, NULL);
+	pthread_join(server, NULL);
+#endif
 
 	printf("======================\ndone");
 	getchar();
