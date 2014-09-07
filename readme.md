@@ -7,8 +7,8 @@ Simple wrapper providing primitives for exchanging data via TCP Sockets on Windo
 
 ## Building
 
- - **Windows** - Open solution file using `Visual Studio 2013` and issue build
- - **Linux** - Browse to `Linux Build` folder and run `make`
+ - **Windows** - Build solution using `Visual Studio 2013` or run `make mingw` from `Linux Build` folder
+ - **Linux** - Browse to `Linux Build` folder and run `make gcc`
 
 --------------
 

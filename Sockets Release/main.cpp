@@ -77,9 +77,9 @@ int main()
 
 #if (defined(_WIN32) || defined(_WIN64))
 	/* Running threads on Windows */
-	HANDLE handleServer = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) ServerThread, NULL, NULL, NULL);
+	HANDLE handleServer = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ServerThread, NULL, NULL, NULL);
 	Sleep(1000);
-	HANDLE handleClient = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) ClientThread, NULL, NULL, NULL);
+	HANDLE handleClient = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ClientThread, NULL, NULL, NULL);
 
 	if (WaitForSingleObject(handleClient, 10000) != WAIT_OBJECT_0)
 		TerminateThread(handleClient, 0);
@@ -101,6 +101,5 @@ int main()
 #endif
 
 	printf("======================\ndone");
-	getchar();
 	return 0;
 }
